@@ -2,6 +2,7 @@ version: '2'
 services:
   db:
     image: mysql
+    container_name: db
     environment:
       MYSQL_ROOT_PASSWORD: petclinic
       MYSQL_DATABASE: petclinic
@@ -24,7 +25,7 @@ services:
       SERVICE_NAME: discovery-server
       EA_OPTS: "-javaagent:/easeagent.jar=/application.conf -Deaseagent.log.conf=/log4j2.xml"
     links:
-     - config-server
+      - config-server
     depends_on:
       - config-server
     entrypoint: ["./wait-for-it.sh","config-server:8888","--timeout=60","--","java","${EA_OPTS}","-Djava.security.egd=file:/dev/./urandom","-jar","/app.jar"]
