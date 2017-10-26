@@ -15,17 +15,33 @@ services:
   discovery-server:
     image: mszarlinski/spring-petclinic-discovery-server
     container_name: discovery-server
+    volumes:
+     - easeagent.jar:/easeagent.jar
+     - application.conf:/application.conf
+     - log4j2.xml:/log4j2.xml
+     - /etc/ssl/certs/java:/etc/ssl/certs/java
+    environment:
+      SERVICE_NAME: discovery-server
+      EA_OPTS: "-javaagent:/easeagent.jar=/application.conf -Deaseagent.log.conf=/log4j2.xml"
     links:
      - config-server
     depends_on:
       - config-server
-    entrypoint: ["./wait-for-it.sh","config-server:8888","--timeout=60","--","java","-Djava.security.egd=file:/dev/./urandom","-jar","/app.jar"]
+    entrypoint: ["./wait-for-it.sh","config-server:8888","--timeout=60","--","java","${EA_OPTS}","-Djava.security.egd=file:/dev/./urandom","-jar","/app.jar"]
     ports:
      - 8761:8761
 
   customers-service:
     image: mszarlinski/spring-petclinic-customers-service
     container_name: customers-service
+    volumes:
+     - easeagent.jar:/easeagent.jar
+     - application.conf:/application.conf
+     - log4j2.xml:/log4j2.xml
+     - /etc/ssl/certs/java:/etc/ssl/certs/java
+    environment:
+      SERVICE_NAME: customers-service
+      EA_OPTS: "-javaagent:/easeagent.jar=/application.conf -Deaseagent.log.conf=/log4j2.xml"
     links:
      - config-server
      - discovery-server
@@ -34,13 +50,21 @@ services:
      - config-server
      - discovery-server
      - db
-    entrypoint: ["./wait-for-it.sh","discovery-server:8761","--timeout=60","--","java","-Djava.security.egd=file:/dev/./urandom","-jar","/app.jar"]
+    entrypoint: ["./wait-for-it.sh","discovery-server:8761","--timeout=60","--","java","${EA_OPTS}","-Djava.security.egd=file:/dev/./urandom","-jar","/app.jar"]
     ports:
     - 8081:8081
 
   visits-service:
     image: mszarlinski/spring-petclinic-visits-service
     container_name: visits-service
+    volumes:
+     - easeagent.jar:/easeagent.jar
+     - application.conf:/application.conf
+     - log4j2.xml:/log4j2.xml
+     - /etc/ssl/certs/java:/etc/ssl/certs/java
+    environment:
+      SERVICE_NAME: visits-service
+      EA_OPTS: "-javaagent:/easeagent.jar=/application.conf -Deaseagent.log.conf=/log4j2.xml"
     links:
      - config-server
      - tracing-server
@@ -49,13 +73,21 @@ services:
      - config-server
      - discovery-server
      - db
-    entrypoint: ["./wait-for-it.sh","discovery-server:8761","--timeout=60","--","java","-Djava.security.egd=file:/dev/./urandom","-jar","/app.jar"]
+    entrypoint: ["./wait-for-it.sh","discovery-server:8761","--timeout=60","--","java","${EA_OPTS}","-Djava.security.egd=file:/dev/./urandom","-jar","/app.jar"]
     ports:
      - 8082:8082
 
   api-gateway:
     image: mszarlinski/spring-petclinic-api-gateway
     container_name: api-gateway
+    volumes:
+     - easeagent.jar:/easeagent.jar
+     - application.conf:/application.conf
+     - log4j2.xml:/log4j2.xml
+     - /etc/ssl/certs/java:/etc/ssl/certs/java
+    environment:
+      SERVICE_NAME: api-gateway
+      EA_OPTS: "-javaagent:/easeagent.jar=/application.conf -Deaseagent.log.conf=/log4j2.xml"
     links:
      - config-server
      - discovery-server
@@ -64,6 +96,6 @@ services:
     depends_on:
      - config-server
      - discovery-server
-    entrypoint: ["./wait-for-it.sh","discovery-server:8761","--timeout=60","--","java","-Djava.security.egd=file:/dev/./urandom","-jar","/app.jar"]
+    entrypoint: ["./wait-for-it.sh","discovery-server:8761","--timeout=60","--","java","${EA_OPTS}","-Djava.security.egd=file:/dev/./urandom","-jar","/app.jar"]
     ports:
      - 8080:8080
