@@ -67,7 +67,7 @@ services:
       EA_OPTS: "-javaagent:/easeagent.jar=/application.conf -Deaseagent.log.conf=/log4j2.xml"
     links:
      - config-server
-     - tracing-server
+     - discovery-server
      - db
     depends_on:
      - config-server
