@@ -4,17 +4,12 @@ function download_easeagent() {
     curl -Lk https://github.com/megaease/release/releases/download/easeagent/easeagent.jar -O
 }
 
-function extract_easeagent_configuration() {
-    jar vxf easeagent.jar application.conf log4j2.xml
-}
-
 function build_docker_images() {
     mvn clean install -Dmaven.test.skip=true -PbuildDocker -pl spring-petclinic-config-server,spring-petclinic-discovery-server,spring-petclinic-visits-service,spring-petclinic-customers-service,spring-petclinic-api-gateway
 
 }
 
 download_easeagent && \
-extract_easeagent_configuration && \
 build_docker_images && \
 docker_compose up -d && \
 echo "Done."
