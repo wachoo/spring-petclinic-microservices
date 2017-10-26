@@ -17,9 +17,9 @@ services:
     image: mszarlinski/spring-petclinic-discovery-server
     container_name: discovery-server
     volumes:
-     - easeagent.jar:/easeagent.jar
-     - application.conf:/application.conf
-     - log4j2.xml:/log4j2.xml
+     - ./easeagent.jar:/easeagent.jar
+     - ./application.conf:/application.conf
+     - ./log4j2.xml:/log4j2.xml
      - /etc/ssl/certs/java:/etc/ssl/certs/java
     environment:
       SERVICE_NAME: discovery-server
@@ -36,9 +36,9 @@ services:
     image: mszarlinski/spring-petclinic-customers-service
     container_name: customers-service
     volumes:
-     - easeagent.jar:/easeagent.jar
-     - application.conf:/application.conf
-     - log4j2.xml:/log4j2.xml
+     - ./easeagent.jar:/easeagent.jar
+     - ./application.conf:/application.conf
+     - ./log4j2.xml:/log4j2.xml
      - /etc/ssl/certs/java:/etc/ssl/certs/java
     environment:
       SERVICE_NAME: customers-service
@@ -59,9 +59,9 @@ services:
     image: mszarlinski/spring-petclinic-visits-service
     container_name: visits-service
     volumes:
-     - easeagent.jar:/easeagent.jar
-     - application.conf:/application.conf
-     - log4j2.xml:/log4j2.xml
+     - ./easeagent.jar:/easeagent.jar
+     - ./application.conf:/application.conf
+     - ./log4j2.xml:/log4j2.xml
      - /etc/ssl/certs/java:/etc/ssl/certs/java
     environment:
       SERVICE_NAME: visits-service
@@ -82,9 +82,9 @@ services:
     image: mszarlinski/spring-petclinic-api-gateway
     container_name: api-gateway
     volumes:
-     - easeagent.jar:/easeagent.jar
-     - application.conf:/application.conf
-     - log4j2.xml:/log4j2.xml
+     - ./easeagent.jar:/easeagent.jar
+     - ./application.conf:/application.conf
+     - ./log4j2.xml:/log4j2.xml
      - /etc/ssl/certs/java:/etc/ssl/certs/java
     environment:
       SERVICE_NAME: api-gateway
