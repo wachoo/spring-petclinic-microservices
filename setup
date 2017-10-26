@@ -9,7 +9,8 @@ function extract_easeagent_configuration() {
 }
 
 function build_docker_images() {
-    mvn clean install -PbuildDocker
+    mvn clean install -Dmaven.test.skip=true -PbuildDocker -pl spring-petclinic-config-server,spring-petclinic-discovery-server,spring-petclinic-visits-service,spring-petclinic-customers-service,spring-petclinic-api-gateway
+
 }
 
 download_easeagent && \
