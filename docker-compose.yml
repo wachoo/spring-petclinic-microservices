@@ -12,16 +12,21 @@ services:
   config-server:
     image: mszarlinski/spring-petclinic-config-server
     container_name: config-server
+    volumes:
+     - ./entrypoint:/entrypoint
+     - /etc/ssl/certs/java:/etc/ssl/certs/java
     ports:
      - 8888:8888
+    environment:
+      SERVICE_NAME: config-server
+    entrypoint: /entrypoint/main.sh
+
 
   discovery-server:
     image: mszarlinski/spring-petclinic-discovery-server
     container_name: discovery-server
     volumes:
-     - ./easeagent.jar:/easeagent.jar
-     - ./application.conf:/application.conf
-     - ./log4j2.xml:/log4j2.xml
+     - ./entrypoint:/entrypoint
      - /etc/ssl/certs/java:/etc/ssl/certs/java
     environment:
       SERVICE_NAME: discovery-server
@@ -29,17 +34,7 @@ services:
       - config-server
     depends_on:
       - config-server
-    entrypoint:
-     - "./wait-for-it.sh"
-     - "config-server:8888"
-     - "--timeout=60"
-     - "--"
-     - "java"
-     - "-javaagent:/easeagent.jar=/application.conf"
-     - "-Deaseagent.log.conf=/log4j2.xml"
-     - "-Djava.security.egd=file:/dev/./urandom"
-     - "-jar"
-     - "/app.jar"
+    entrypoint: ["./wait-for-it.sh","config-server:8888","--timeout=60","--","/entrypoint/main.sh"]
     ports:
      - 8761:8761
 
@@ -53,6 +48,7 @@ services:
      - /etc/ssl/certs/java:/etc/ssl/certs/java
     environment:
       SERVICE_NAME: customers-service
+      JAVA_OPTS: "-Dspring.datasource.url=jdbc:mysql://db/petclinic -Dspring.datasource.username=root -Dspring.datasource.password=petclinic -Dspring.datasource.driver-class-name=com.mysql.jdbc.Driver"
     links:
      - config-server
      - discovery-server
@@ -61,34 +57,19 @@ services:
      - config-server
      - discovery-server
      - db
-    entrypoint:
-     - "./wait-for-it.sh"
-     - "discovery-server:8761"
-     - "--timeout=60"
-     - "--"
-     - "java"
-     - "-javaagent:/easeagent.jar=/application.conf"
-     - "-Deaseagent.log.conf=/log4j2.xml"
-     - "-Dspring.datasource.url=jdbc:mysql://db/petclinic"
-     - "-Dspring.datasource.username=root"
-     - "-Dspring.datasource.password=petclinic"
-     - "-Dspring.datasource.driver-class-name=com.mysql.jdbc.Driver"
-     - "-Djava.security.egd=file:/dev/./urandom"
-     - "-jar"
-     - "/app.jar"
+    entrypoint: ["./wait-for-it.sh","config-server:8888","--timeout=60","--","/entrypoint/main.sh"]
     ports:
-    - 8081:8081
+     - 8081:8081
 
   visits-service:
     image: mszarlinski/spring-petclinic-visits-service
     container_name: visits-service
     volumes:
-     - ./easeagent.jar:/easeagent.jar
-     - ./application.conf:/application.conf
-     - ./log4j2.xml:/log4j2.xml
+     - ./entrypoint:/entrypoint
      - /etc/ssl/certs/java:/etc/ssl/certs/java
     environment:
       SERVICE_NAME: visits-service
+      JAVA_OPTS: "-Dspring.datasource.url=jdbc:mysql://db/petclinic -Dspring.datasource.username=root -Dspring.datasource.password=petclinic -Dspring.datasource.driver-class-name=com.mysql.jdbc.Driver"
     links:
      - config-server
      - discovery-server
@@ -97,21 +78,7 @@ services:
      - config-server
      - discovery-server
      - db
-    entrypoint:
-     - "./wait-for-it.sh"
-     - "discovery-server:8761"
-     - "--timeout=60"
-     - "--"
-     - "java"
-     - "-javaagent:/easeagent.jar=/application.conf"
-     - "-Deaseagent.log.conf=/log4j2.xml"
-     - "-Dspring.datasource.url=jdbc:mysql://db/petclinic"
-     - "-Dspring.datasource.username=root"
-     - "-Dspring.datasource.password=petclinic"
-     - "-Dspring.datasource.driver-class-name=com.mysql.jdbc.Driver"
-     - "-Djava.security.egd=file:/dev/./urandom"
-     - "-jar"
-     - "/app.jar"
+    entrypoint: ["./wait-for-it.sh","config-server:8888","--timeout=60","--","/entrypoint/main.sh"]
     ports:
      - 8082:8082
 
@@ -119,12 +86,11 @@ services:
     image: mszarlinski/spring-petclinic-api-gateway
     container_name: api-gateway
     volumes:
-     - ./easeagent.jar:/easeagent.jar
-     - ./application.conf:/application.conf
-     - ./log4j2.xml:/log4j2.xml
+     - ./entrypoint:/entrypoint
      - /etc/ssl/certs/java:/etc/ssl/certs/java
     environment:
       SERVICE_NAME: api-gateway
+      JAVA_OPTS: $DEBUG_PROXY
     links:
      - config-server
      - discovery-server
@@ -133,16 +99,6 @@ services:
     depends_on:
      - config-server
      - discovery-server
-    entrypoint:
-     - "./wait-for-it.sh"
-     - "discovery-server:8761"
-     - "--timeout=60"
-     - "--"
-     - "java"
-     - "-javaagent:/easeagent.jar=/application.conf"
-     - "-Deaseagent.log.conf=/log4j2.xml"
-     - "-Djava.security.egd=file:/dev/./urandom"
-     - "-jar"
-     - "/app.jar"
+    entrypoint: ["./wait-for-it.sh","config-server:8888","--timeout=60","--","/entrypoint/main.sh"]
     ports:
      - 8080:8080

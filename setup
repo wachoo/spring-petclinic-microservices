@@ -1,7 +1,7 @@
 #! /bin/bash
 
 function download_easeagent() {
-    curl -Lk https://github.com/megaease/release/releases/download/easeagent/easeagent.jar -O
+    curl -Lk https://github.com/megaease/release/releases/download/easeagent/easeagent.jar -o entrypoint/easeagent.jar
 }
 
 function build_docker_images() {
