@@ -3,6 +3,8 @@ services:
   db:
     image: mysql
     container_name: db
+    volumes:
+     - ./mysql:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: petclinic
       MYSQL_DATABASE: petclinic
@@ -67,6 +69,10 @@ services:
      - "java"
      - "-javaagent:/easeagent.jar=/application.conf"
      - "-Deaseagent.log.conf=/log4j2.xml"
+     - "-Dspring.datasource.url=jdbc:mysql://db/petclinic"
+     - "-Dspring.datasource.username=root"
+     - "-Dspring.datasource.password=petclinic"
+     - "-Dspring.datasource.driver-class-name=com.mysql.jdbc.Driver"
      - "-Djava.security.egd=file:/dev/./urandom"
      - "-jar"
      - "/app.jar"
@@ -99,6 +105,10 @@ services:
      - "java"
      - "-javaagent:/easeagent.jar=/application.conf"
      - "-Deaseagent.log.conf=/log4j2.xml"
+     - "-Dspring.datasource.url=jdbc:mysql://db/petclinic"
+     - "-Dspring.datasource.username=root"
+     - "-Dspring.datasource.password=petclinic"
+     - "-Dspring.datasource.driver-class-name=com.mysql.jdbc.Driver"
      - "-Djava.security.egd=file:/dev/./urandom"
      - "-jar"
      - "/app.jar"
