@@ -42,9 +42,7 @@ services:
     image: mszarlinski/spring-petclinic-customers-service
     container_name: customers-service
     volumes:
-     - ./easeagent.jar:/easeagent.jar
-     - ./application.conf:/application.conf
-     - ./log4j2.xml:/log4j2.xml
+     - ./entrypoint:/entrypoint
      - /etc/ssl/certs/java:/etc/ssl/certs/java
     environment:
       SERVICE_NAME: customers-service
