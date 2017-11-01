@@ -60,6 +60,7 @@ services:
     entrypoint: ["./wait-for-it.sh","config-server:8888","--timeout=60","--","/entrypoint/main.sh"]
     ports:
      - 8081:8081
+     - 17264:17260
 
   visits-service:
     image: mszarlinski/spring-petclinic-visits-service
