@@ -17,7 +17,7 @@ services:
      - /etc/ssl/certs/java:/etc/ssl/certs/java
     ports:
      - 8888:8888
-     - 17264:17261
+     - 17260:17264
     environment:
       SERVICE_NAME: config-server
     entrypoint: /entrypoint/main.sh
@@ -38,7 +38,7 @@ services:
     entrypoint: ["./wait-for-it.sh","config-server:8888","--timeout=60","--","/entrypoint/main.sh"]
     ports:
      - 8761:8761
-     - 17264:17262
+     - 17261:17264
 
   customers-service:
     image: mszarlinski/spring-petclinic-customers-service
@@ -60,7 +60,7 @@ services:
     entrypoint: ["./wait-for-it.sh","config-server:8888","--timeout=60","--","/entrypoint/main.sh"]
     ports:
      - 8081:8081
-     - 17264:17260
+     - 17262:17264
 
   visits-service:
     image: mszarlinski/spring-petclinic-visits-service
@@ -82,7 +82,7 @@ services:
     entrypoint: ["./wait-for-it.sh","config-server:8888","--timeout=60","--","/entrypoint/main.sh"]
     ports:
      - 8082:8082
-     - 17264:17263
+     - 17263:17264
 
   api-gateway:
     image: mszarlinski/spring-petclinic-api-gateway
@@ -105,3 +105,23 @@ services:
     ports:
      - 8080:8080
      - 17264:17264
+
+  api-gateway-collectd:
+    image: dockerhub.megaease.com/easemon/collectd
+    volumes:
+     - /etc/hostname:/mnt/hostname:ro
+     - /etc:/mnt/etc:ro
+     - /:/hostfs:ro
+     - collectd/log/:/usr/share/easemon/collectd/log
+     - /etc/ssl/certs/gateway.easeapm.com-cert.pem:/etc/ssl/certs/gateway.easeapm.com-cert.pem
+    environment:
+     - ENABLE_JVM: true
+     - JVM_HOST: api-gateway
+     - JVM_JMX_PORT: 17264
+     - ENABLE_TOMCAT: true
+     - TOMCAT_HOST: api-gateway
+     - TOMCAT_JMX_PORT: 17264
+    depends_on:
+     - api-gateway
+    links:
+     - api-gateway
