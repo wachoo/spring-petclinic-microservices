@@ -6,5 +6,6 @@ export JAVA_OPTS="${JAVA_OPTS} -Djava.security.egd=file:/dev/./urandom"
 export JAVA_OPTS="${JAVA_OPTS} -Dcom.sun.management.jmxremote"
 export JAVA_OPTS="${JAVA_OPTS} -Dcom.sun.management.jmxremote.ssl=false"
 export JAVA_OPTS="${JAVA_OPTS} -Dcom.sun.management.jmxremote.authenticate=false"
+export JAVA_OPTS="${JAVA_OPTS} -Dcom.sun.management.jmxremote.port=17264"
 
 java ${JAVA_OPTS}  -jar /app.jar
