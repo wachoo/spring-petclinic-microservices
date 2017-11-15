@@ -105,6 +105,7 @@ services:
 
   collectd:
     image: dockerhub.megaease.com/easemon/collectd
+    container_name: collectd
     volumes:
      - /etc/hostname:/mnt/hostname:ro
      - /etc:/mnt/etc:ro
