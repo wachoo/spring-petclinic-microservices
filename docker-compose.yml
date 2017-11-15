@@ -137,7 +137,7 @@ services:
      - ./mock_client/main.py:/main.py
     environment:
       HOST_PORT: api-gateway:8080
-    entrypoint: ["./wait-for-it.sh","api-gateway:8080","--timeout=60","--","python main.py"]
+    entrypoint: ["./wait-for-it.sh","api-gateway:8080","--timeout=60","--","/main.py"]
     depends_on:
      - api-gateway
     links:
