@@ -17,7 +17,6 @@ services:
      - /etc/ssl/certs/java:/etc/ssl/certs/java
     ports:
      - 8888:8888
-     - 17260:17264
     environment:
       SERVICE_NAME: config-server
     entrypoint: /entrypoint/main.sh
@@ -38,7 +37,6 @@ services:
     entrypoint: ["./wait-for-it.sh","config-server:8888","--timeout=60","--","/entrypoint/main.sh"]
     ports:
      - 8761:8761
-     - 17261:17264
 
   customers-service:
     image: mszarlinski/spring-petclinic-customers-service
@@ -60,7 +58,6 @@ services:
     entrypoint: ["./wait-for-it.sh","config-server:8888","--timeout=60","--","/entrypoint/main.sh"]
     ports:
      - 8081:8081
-     - 17262:17264
 
   visits-service:
     image: mszarlinski/spring-petclinic-visits-service
@@ -82,7 +79,6 @@ services:
     entrypoint: ["./wait-for-it.sh","config-server:8888","--timeout=60","--","/entrypoint/main.sh"]
     ports:
      - 8082:8082
-     - 17263:17264
 
   api-gateway:
     image: mszarlinski/spring-petclinic-api-gateway
@@ -102,9 +98,10 @@ services:
      - config-server
      - discovery-server
     entrypoint: ["./wait-for-it.sh","config-server:8888","--timeout=60","--","/entrypoint/main.sh"]
+    expose:
+     - "17264"
     ports:
      - 8080:8080
-     - 17264:17264
 
   api-gateway-collectd:
     image: dockerhub.megaease.com/easemon/collectd
@@ -112,16 +109,18 @@ services:
      - /etc/hostname:/mnt/hostname:ro
      - /etc:/mnt/etc:ro
      - /:/hostfs:ro
-     - collectd/log/:/usr/share/easemon/collectd/log
      - /etc/ssl/certs/gateway.easeapm.com-cert.pem:/etc/ssl/certs/gateway.easeapm.com-cert.pem
+     - ./collectd/log:/usr/share/easemon/collectd/log
+     - ./collectd/wait-for-it.sh:/wait-for-it.sh
+     - ./collectd/main.sh:/main.sh
+     - ./collectd/conf_tmpl.py:/main.sh
     environment:
-     - ENABLE_JVM: true
-     - JVM_HOST: api-gateway
-     - JVM_JMX_PORT: 17264
-     - ENABLE_TOMCAT: true
-     - TOMCAT_HOST: api-gateway
-     - TOMCAT_JMX_PORT: 17264
+      IAAS: enable
+      JMX_HOST_PORT: api-getway:17264
+      MYSQL_URI: root:petclinic@db/petclinic
+    entrypoint: ["./wait-for-it.sh","api-gateway:8080","--timeout=60","--","/entrypoint/main.sh"]
     depends_on:
      - api-gateway
     links:
      - api-gateway
+     - db
