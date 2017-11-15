@@ -110,7 +110,7 @@ services:
      - /:/hostfs:ro
      - /etc/ssl/certs/gateway.easeapm.com-cert.pem:/etc/ssl/certs/gateway.easeapm.com-cert.pem
      - ./collectd/log:/usr/share/easemon/collectd/log
-     - ./collectd/wait-for-it.sh:/wait-for-it.sh
+     - ./wait-for-it.sh:/wait-for-it.sh
      - ./collectd/main.sh:/main.sh
      - ./collectd/conf_tmpl.py:/conf_tmpl.py
     env_file: ./collectd/host.env
@@ -128,3 +128,17 @@ services:
     links:
      - api-gateway
      - db
+
+  mock-client:
+    image: dockerhub.megaease.com/hexdecteam/ubuntu
+    container_name: mock-client
+    volumes:
+     - ./wait-for-it.sh:/wait-for-it.sh
+     - ./mock_client/main.py:/main.py
+    enviroment:
+      HOST_PORT: api-gateway:8080
+    entrypoint: ["./wait-for-it.sh","api-gateway:8080","--timeout=60","--","python main.py"]
+    depends_on:
+     - api-gateway
+    links:
+     - api-gateway
