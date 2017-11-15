@@ -113,12 +113,12 @@ services:
      - ./collectd/log:/usr/share/easemon/collectd/log
      - ./collectd/wait-for-it.sh:/wait-for-it.sh
      - ./collectd/main.sh:/main.sh
-     - ./collectd/conf_tmpl.py:/main.sh
+     - ./collectd/conf_tmpl.py:/conf_tmpl.py
     environment:
       IAAS: enable
       JMX_HOST_PORT: api-getway:17264
       MYSQL_URI: root:petclinic@db/petclinic
-    entrypoint: ["./wait-for-it.sh","api-gateway:17264","--timeout=60","--","main.sh"]
+    entrypoint: ["./wait-for-it.sh","api-gateway:17264","--timeout=60","--","/main.sh"]
     depends_on:
      - api-gateway
     links:
