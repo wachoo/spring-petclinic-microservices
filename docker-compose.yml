@@ -116,9 +116,12 @@ services:
      - ./collectd/main.sh:/main.sh
      - ./collectd/conf_tmpl.py:/conf_tmpl.py
     environment:
+      SYSTEM: spring-petclinic
       IAAS: enable
       JMX_HOST_PORT: api-getway:17264
       MYSQL_URI: root:petclinic@db/petclinic
+      GW_URL: https://gateway.easeapm.com:10443/v1/metrics
+      GW_CA: /etc/ssl/certs/gateway.easeapm.com-cert.pem
     entrypoint: ["./wait-for-it.sh","api-gateway:17264","--timeout=60","--","/main.sh"]
     depends_on:
      - api-gateway
