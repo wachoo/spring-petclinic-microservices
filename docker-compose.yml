@@ -103,7 +103,7 @@ services:
     ports:
      - 8080:8080
 
-  api-gateway-collectd:
+  collectd:
     image: dockerhub.megaease.com/easemon/collectd
     volumes:
      - /etc/hostname:/mnt/hostname:ro
@@ -118,7 +118,7 @@ services:
       IAAS: enable
       JMX_HOST_PORT: api-getway:17264
       MYSQL_URI: root:petclinic@db/petclinic
-    entrypoint: ["./wait-for-it.sh","api-gateway:8080","--timeout=60","--","/entrypoint/main.sh"]
+    entrypoint: ["./wait-for-it.sh","api-gateway:17264","--timeout=60","--","main.sh"]
     depends_on:
      - api-gateway
     links:
