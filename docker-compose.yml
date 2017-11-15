@@ -135,7 +135,7 @@ services:
     volumes:
      - ./wait-for-it.sh:/wait-for-it.sh
      - ./mock_client/main.py:/main.py
-    enviroment:
+    environment:
       HOST_PORT: api-gateway:8080
     entrypoint: ["./wait-for-it.sh","api-gateway:8080","--timeout=60","--","python main.py"]
     depends_on:
