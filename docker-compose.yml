@@ -107,14 +107,13 @@ services:
     image: dockerhub.megaease.com/easemon/collectd
     container_name: collectd
     volumes:
-     - /etc/hostname:/mnt/hostname:ro
-     - /etc:/mnt/etc:ro
      - /:/hostfs:ro
      - /etc/ssl/certs/gateway.easeapm.com-cert.pem:/etc/ssl/certs/gateway.easeapm.com-cert.pem
      - ./collectd/log:/usr/share/easemon/collectd/log
      - ./collectd/wait-for-it.sh:/wait-for-it.sh
      - ./collectd/main.sh:/main.sh
      - ./collectd/conf_tmpl.py:/conf_tmpl.py
+    env_file: ./collectd/host.env
     environment:
       SYSTEM: spring-petclinic
       IAAS: enable
@@ -122,6 +121,7 @@ services:
       MYSQL_URI: root:petclinic@db/petclinic
       GW_URL: https://gateway.easeapm.com:10443/v1/metrics
       GW_CA: /etc/ssl/certs/gateway.easeapm.com-cert.pem
+      INTERVAL: 60
     entrypoint: ["./wait-for-it.sh","api-gateway:17264","--timeout=60","--","/main.sh"]
     depends_on:
      - api-gateway
