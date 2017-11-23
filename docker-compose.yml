@@ -15,8 +15,8 @@ services:
     volumes:
      - ./entrypoint:/entrypoint
      - /etc/ssl/certs/java:/etc/ssl/certs/java
-    ports:
-     - 8888:8888
+    expose:
+     - "8888"
     environment:
       SERVICE_NAME: config-server
     entrypoint: /entrypoint/main.sh
@@ -35,8 +35,8 @@ services:
     depends_on:
       - config-server
     entrypoint: ["./wait-for-it.sh","config-server:8888","--timeout=60","--","/entrypoint/main.sh"]
-    ports:
-     - 8761:8761
+    expose:
+     - "8761"
 
   customers-service:
     image: mszarlinski/spring-petclinic-customers-service
@@ -56,8 +56,8 @@ services:
      - discovery-server
      - db
     entrypoint: ["./wait-for-it.sh","config-server:8888","--timeout=60","--","/entrypoint/main.sh"]
-    ports:
-     - 8081:8081
+    expose:
+     - "8081"
 
   visits-service:
     image: mszarlinski/spring-petclinic-visits-service
@@ -77,8 +77,8 @@ services:
      - discovery-server
      - db
     entrypoint: ["./wait-for-it.sh","config-server:8888","--timeout=60","--","/entrypoint/main.sh"]
-    ports:
-     - 8082:8082
+    expose:
+     - "8082"
 
   api-gateway:
     image: mszarlinski/spring-petclinic-api-gateway
@@ -100,8 +100,19 @@ services:
     entrypoint: ["./wait-for-it.sh","config-server:8888","--timeout=60","--","/entrypoint/main.sh"]
     expose:
      - "17264"
+     - "8080"
+
+  nginx:
+    image: nginx
+    container_name: nginx
+    volumes:
+     - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    links:
+     - api-gateway
+    depends_on:
+     - api-gateway
     ports:
-     - 8080:8080
+     - 8080:80
 
   collectd:
     image: dockerhub.megaease.com/easemon/collectd
@@ -113,20 +124,21 @@ services:
      - ./wait-for-it.sh:/wait-for-it.sh
      - ./collectd/main.sh:/main.sh
      - ./collectd/conf_tmpl.py:/conf_tmpl.py
-    env_file: ./collectd/host.env
     environment:
       SYSTEM: spring-petclinic
       IAAS: enable
-      JMX_HOST_PORT: api-getway:17264
+      JMX_HOST_PORT: api-gateway:17264
+      NGINX_STATUS_URL: http://nginx/status
       MYSQL_URI: root:petclinic@db/petclinic
       GW_URL: https://gateway.easeapm.com:10443/v1/metrics
       GW_CA: /etc/ssl/certs/gateway.easeapm.com-cert.pem
       INTERVAL: 60
-    entrypoint: ["./wait-for-it.sh","api-gateway:17264","--timeout=60","--","/main.sh"]
+    entrypoint: ["./wait-for-it.sh","nginx:80","--timeout=60","--","/main.sh"]
     depends_on:
-     - api-gateway
+     - nginx
     links:
      - api-gateway
+     - nginx
      - db
 
   mock-client:
@@ -136,9 +148,9 @@ services:
      - ./wait-for-it.sh:/wait-for-it.sh
      - ./mock_client/main.py:/main.py
     environment:
-      HOST_PORT: api-gateway:8080
-    entrypoint: ["./wait-for-it.sh","api-gateway:8080","--timeout=60","--","/main.py"]
+      HOST_PORT: nginx/api
+    entrypoint: ["./wait-for-it.sh","nginx:80","--timeout=60","--","/main.py"]
     depends_on:
-     - api-gateway
+     - nginx
     links:
-     - api-gateway
+     - nginx

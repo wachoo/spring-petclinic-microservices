@@ -12,7 +12,7 @@ def next_id():
 
 
 if __name__ == '__main__':
-    base = string.Template("http://$HOST_PORT/owners/").substitute(os.environ)
+    base = string.Template("http://$HOST_PORT/api/owners/").substitute(os.environ)
     while True:
         try:
             url = base + next_id()
