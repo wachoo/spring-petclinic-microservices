@@ -108,7 +108,7 @@ services:
     image: nginx
     container_name: nginx
     volumes:
-     - ./nginx.conf:/etc/nginx/nginx.conf:ro
+     - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
      - ./nginx/log:/var/log/nginx1
     links:
      - api-gateway
@@ -124,7 +124,7 @@ services:
      - ./wait-for-it.sh:/wait-for-it.sh
      - ./mock_client/main.py:/main.py
     environment:
-      HOST_PORT: nginx/api
+      HOST_PORT: nginx
     entrypoint: ["./wait-for-it.sh","api-gateway:8080","--timeout=60","--","/main.py"]
     depends_on:
      - nginx
