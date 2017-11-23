@@ -4,7 +4,9 @@ services:
     image: mysql
     container_name: db
     volumes:
-     - ./mysql:/var/lib/mysql
+     - ./mysql/data:/var/lib/mysql
+     - ./mysql/log:/var/log/mysql
+     - ./mysql/my.cnf:/etc/mysql/mysql.conf.d/mysqld.cnf
     environment:
       MYSQL_ROOT_PASSWORD: petclinic
       MYSQL_DATABASE: petclinic
@@ -107,12 +109,29 @@ services:
     container_name: nginx
     volumes:
      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+     - ./nginx/log:/var/log/nginx1
     links:
      - api-gateway
     depends_on:
      - api-gateway
     ports:
      - 8080:80
+
+  mock-client:
+    image: dockerhub.megaease.com/hexdecteam/ubuntu
+    container_name: mock-client
+    volumes:
+     - ./wait-for-it.sh:/wait-for-it.sh
+     - ./mock_client/main.py:/main.py
+    environment:
+      HOST_PORT: nginx/api
+    entrypoint: ["./wait-for-it.sh","api-gateway:8080","--timeout=60","--","/main.py"]
+    depends_on:
+     - nginx
+     - api-gateway
+    links:
+     - nginx
+     - api-gateway
 
   collectd:
     image: dockerhub.megaease.com/easemon/collectd
@@ -133,7 +152,7 @@ services:
       GW_URL: https://gateway.easeapm.com:10443/v1/metrics
       GW_CA: /etc/ssl/certs/gateway.easeapm.com-cert.pem
       INTERVAL: 60
-    entrypoint: ["./wait-for-it.sh","nginx:80","--timeout=60","--","/main.sh"]
+    entrypoint: ["./wait-for-it.sh","api-gateway:17264","--timeout=60","--","/main.sh"]
     depends_on:
      - nginx
     links:
@@ -141,16 +160,20 @@ services:
      - nginx
      - db
 
-  mock-client:
-    image: dockerhub.megaease.com/hexdecteam/ubuntu
-    container_name: mock-client
+  filebeat:
+    image: dockerhub.megaease.com/easemon/filebeat
+    container_name: filebeat
     volumes:
+     - /etc/ssl/certs/gateway.easeapm.com-cert.pem:/etc/ssl/certs/gateway.easeapm.com-cert.pem
      - ./wait-for-it.sh:/wait-for-it.sh
-     - ./mock_client/main.py:/main.py
+     - ./filebeat/main.sh:/main.sh
+     - ./filebeat/log:/usr/share/easemon/filebeat/log
+     - ./filebeat/yml_tmpl.py:/yml_tmpl.py
+     - ./mysql/log:/var/log/mysql
+     - ./nginx/log:/var/log/nginx
     environment:
-      HOST_PORT: nginx/api
-    entrypoint: ["./wait-for-it.sh","nginx:80","--timeout=60","--","/main.py"]
-    depends_on:
-     - nginx
-    links:
-     - nginx
+      SYSTEM: spring-petclinic
+      NGINX: nginx
+      GW_URL: https://gateway.easeapm.com:10443/v1/logs
+      GW_CA: /etc/ssl/certs/gateway.easeapm.com-cert.pem
+    entrypoint: ["./wait-for-it.sh","api-gateway:8080","--timeout=60","--","/main.sh"]
