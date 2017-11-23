@@ -176,4 +176,6 @@ services:
       NGINX: nginx
       GW_URL: https://gateway.easeapm.com:10443/v1/logs
       GW_CA: /etc/ssl/certs/gateway.easeapm.com-cert.pem
+    links:
+     - api-gateway
     entrypoint: ["./wait-for-it.sh","api-gateway:8080","--timeout=60","--","/main.sh"]
