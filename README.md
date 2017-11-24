@@ -8,10 +8,26 @@ sudo keytool -importcert -v -trustcacerts -alias gateway.easeapm.com -file ea.pe
 
 > the password of default keystore is `changeit`
 
-# Setup petclinic cluster
+# Setup petclinic cluster for the first time
 
 ```bash
 ./setup
 ```
+
+# Shutdown cluster
+
+```bash
+docker-compose down
+```
+
+# Start a cluster
+
+```bash
+docker-compose up -d
+```
+
+> More commands about docker-compose, please see https://docs.docker.com/compose/reference/
+
+----
 
 > Origin [README](https://github.com/spring-petclinic/spring-petclinic-microservices/blob/master/README.md).
