@@ -100,7 +100,7 @@ services:
     depends_on:
      - config-server
      - discovery-server
-    entrypoint: ["./wait-for-it.sh","config-server:8888","--timeout=60","--","/entrypoint/main.sh"]
+ˆ    entrypoint: ["./wait-for-it.sh","customers-service:8081","--timeout=60","--","/entrypoint/main.sh"]
     expose:
      - "17264"
      - "8080"
