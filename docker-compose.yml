@@ -34,7 +34,7 @@ services:
       - config-server
     depends_on:
       - config-server
-    entrypoint: ["./wait-for-it.sh","config-server:8888","--timeout=60","--","/entrypoint/main.sh"]
+    entrypoint: ["./wait-for-it.sh","config-server:8888","--timeout=60","--","java","-Djava.security.egd=file:/dev/./urandom","-jar","/app.jar"]
     expose:
      - "8761"
 
@@ -80,6 +80,18 @@ services:
     expose:
      - "8082"
 
+#  Uncomment for debugging
+#  mitmproxy:
+#    image: mitmproxy/mitmproxy
+#    container_name: mitmproxy
+#    links:
+#     - config-server
+#     - discovery-server
+#     - customers-service
+#    ports:
+#     - 8081:8081
+#    command: mitmweb --web-iface 0.0.0.0
+
   api-gateway:
     image: mszarlinski/spring-petclinic-api-gateway
     container_name: api-gateway
@@ -88,12 +100,13 @@ services:
      - /etc/ssl/certs/java:/etc/ssl/certs/java
     environment:
       SERVICE_NAME: api-gateway
-      JAVA_OPTS: $DEBUG_PROXY
+#      JAVA_OPTS: "-Dhttp.proxyHost=mitmproxy -Dhttp.proxyPort=8080"
     links:
      - config-server
      - discovery-server
      - customers-service
      - visits-service
+#     - mitmproxy
     depends_on:
      - config-server
      - discovery-server
