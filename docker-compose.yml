@@ -21,6 +21,7 @@ services:
      - "8888"
     environment:
       SERVICE_NAME: config-server
+      JAVA_OPTS: $LOCAL_CONFIG_URI
     entrypoint: /entrypoint/main.sh
 
 

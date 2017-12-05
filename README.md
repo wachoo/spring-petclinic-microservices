@@ -28,6 +28,14 @@ docker-compose up -d
 
 > More commands about docker-compose, please see https://docs.docker.com/compose/reference/
 
+# Use local file for config server
+
+```bash
+git clone https://github.com/megaease/spring-petclinic-microservices-config $CONFIG_PATH
+
+export LOCAL_CONFIG_URI="-Dspring.cloud.config.server.git.uri=file:$CONFIG_PATH"
+```
+
 ----
 
 > Origin [README](https://github.com/spring-petclinic/spring-petclinic-microservices/blob/master/README.md).
