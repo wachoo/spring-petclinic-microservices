@@ -28,6 +28,9 @@
         <Logger name="com.megaease.easeagent.zipkin.LogSender" level="error" additivity="false">
             <AppenderRef ref="Console"/>
         </Logger>
+        <Logger name="com.megaease.easeagent.zipkin.DebugReporterMetrics" level="error" additivity="false">
+            <AppenderRef ref="Console"/>
+        </Logger>
         <Logger name="metrics" level="info" additivity="false">
             <AppenderRef ref="failover-metrics"/>
         </Logger>
