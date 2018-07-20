@@ -11,5 +11,5 @@ function build_docker_images() {
 
 download_easeagent && \
 build_docker_images && \
-docker_compose up -d && \
+docker-compose up -d && \
 echo "Done."
