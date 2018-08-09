@@ -3,10 +3,11 @@ services:
   db:
     image: mysql
     container_name: db
+    #command: --default-authentication-plugin=mysql_native_password
     volumes:
      - ./mysql/data:/var/lib/mysql
      - ./mysql/log:/var/log/mysql
-     - ./mysql/my.cnf:/etc/mysql/mysql.conf.d/mysqld.cnf
+     - ./mysql/my.cnf:/etc/mysql/conf.d/mysqld.cnf
     environment:
       MYSQL_ROOT_PASSWORD: petclinic
       MYSQL_DATABASE: petclinic
